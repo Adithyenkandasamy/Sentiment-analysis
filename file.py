@@ -4,13 +4,14 @@ import pytesseract
 from PIL import Image
 import re
 from textblob import TextBlob
+import os
 
 # Step 1: Download the Kaggle dataset
 path = kagglehub.dataset_download("danushkumarv/sentiment-analysis-in-tamilenglish-text")
 print("Dataset downloaded at:", path)
 
 # Step 2: Load the dataset
-dataset_path = path + "/your_file.csv"  # Update with actual dataset file name
+dataset_path = os.path.join(path, "Tamil_sentiments.csv")  # Correct path handling
 df = pd.read_csv(dataset_path)  # Load dataset into pandas DataFrame
 print("Dataset loaded successfully!")
 
@@ -31,7 +32,7 @@ def analyze_sentiment(text):
     return "Positive" if analysis.sentiment.polarity > 0 else "Negative" if analysis.sentiment.polarity < 0 else "Neutral"
 
 # Step 6: Process Instagram comment screenshot
-screenshot_path = "instagram_comments.png"  # Change this to your actual file
+screenshot_path = "insta_comments.png"  # Change this to your actual file
 
 # Extract comments
 extracted_comments = extract_text_from_image(screenshot_path)

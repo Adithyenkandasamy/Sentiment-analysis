@@ -39,8 +39,31 @@ def upload_file():
             results.append(f"Comment: {comment} | Sentiment: {sentiment}")
 
     return render_template('results.html', results=results)
+def preprocess_image(image_path):
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    image = cv2.resize(image, (0, 0), fx=2, fy=2)  # Scale up
+    image = cv2.GaussianBlur(image, (5, 5), 0)
+    _, image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    return image
 
-# Add the existing functions here (dataset download, image preprocessing, text extraction, cleaning, and sentiment analysis)
+def extract_text_from_image(image_path):
+    try:
+        processed_image = preprocess_image(image_path)
+        extracted_text = pytesseract.image_to_string(processed_image, lang="eng+tam")
+        return extracted_text.strip()
+    except Exception as e:
+        print("Error extracting text from image:", e)
+        return ""
+
+def clean_text(text):
+    text = re.sub(r'[^a-zA-Z0-9\s\u0B80-\u0BFF]', '', text)  # Allow Tamil characters
+    return text.lower().strip()
+
+def analyze_sentiment(text):
+    if not text:
+        return "Neutral"
+    analysis = TextBlob(text)
+    return "Positive" if analysis.sentiment.polarity > 0 else "Negative" if analysis.sentiment.polarity < 0 else "Neutral"
 
 if __name__ == '__main__':
     app.run(debug=True)

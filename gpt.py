@@ -11,7 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 # Azure GPT-4o Configuration
 endpoint = "https://models.inference.ai.azure.com"
 model_name = "gpt-4o"
-token = os.getenv("GITHUB_TOKEN")  # Ensure you have set GITHUB_TOKEN
+token = ""  # Ensure you have set GITHUB_TOKEN
 
 if not token:
     raise ValueError("GITHUB_TOKEN environment variable is not set.")
@@ -48,7 +48,7 @@ def get_feelings_from_gpt(text):
     if not text:
         return "Neutral"
     
-    response = client.chat_completions.create(
+    response = client.complete(
         model=model_name,
         messages=[
             SystemMessage(content="You are an AI that extracts only the main feeling from a given text."),
@@ -59,6 +59,7 @@ def get_feelings_from_gpt(text):
     )
 
     return response.choices[0].message.content.strip()
+
 
 if __name__ == "__main__":
     image_path = input("Enter the image path: ").strip()
